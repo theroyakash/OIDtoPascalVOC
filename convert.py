@@ -1,6 +1,5 @@
 from xml.etree.ElementTree import Element, SubElement, Comment
 import xml.etree.cElementTree as ET
-#from ElementTree_pretty import prettify
 import cv2
 import os
 from pathlib import Path
@@ -13,7 +12,7 @@ parser.add_argument('--dest_path',type=str, required=True, default='Annotation/'
 args = parser.parse_args()
 
 ids = []
-for file in os.listdir(args.sourcepath): #Save all images in a list
+for file in os.listdir(args.sourcepath):
     filename = os.fsdecode(file)
     if filename.endswith('.jpg'):
         ids.append(filename[:-4])
@@ -21,11 +20,11 @@ for file in os.listdir(args.sourcepath): #Save all images in a list
 for fname in ids: 
     myfile = os.path.join(args.dest_path,fname +'.xml')
     myfile = Path(myfile)
-    if not myfile.exists(): #if file is not existing 
-        txtfile = os.path.join(args.sourcepath, 'Label', fname + '.txt') #Read annotation of each image from txt file
+    if not myfile.exists():
+        txtfile = os.path.join(args.sourcepath, 'Label', fname + '.txt') 
         f = open(txtfile,"r")
         imgfile = os.path.join(args.sourcepath, fname +'.jpg')
-        img = cv2.imread(imgfile, cv2.IMREAD_UNCHANGED) #Read image to get image width and height
+        img = cv2.imread(imgfile, cv2.IMREAD_UNCHANGED) 
         top = Element('annotation')
         child = SubElement(top,'folder')
         child.text = 'open_images_volume'
@@ -54,7 +53,7 @@ for fname in ids:
             child_depth.text = '3'
         child_seg = SubElement(top, 'segmented')
         child_seg.text = '0'
-        for x in f:     #Iterate for each object in a image. 
+        for x in f:
             x = list(x.split())
             name = ' '.join(x[:-4])
             x = [name] + x[-4:]
@@ -75,16 +74,16 @@ for fname in ids:
             child_bndbox = SubElement(child_obj, 'bndbox')
 
             child_xmin = SubElement(child_bndbox, 'xmin')
-            child_xmin.text = str(int(float(x[1]))) #xmin
+            child_xmin.text = str(int(float(x[1])))
 
             child_ymin = SubElement(child_bndbox, 'ymin')
-            child_ymin.text = str(int(float(x[2]))) #ymin
+            child_ymin.text = str(int(float(x[2])))
 
             child_xmax = SubElement(child_bndbox, 'xmax')
-            child_xmax.text = str(int(float(x[3]))) #xmax
+            child_xmax.text = str(int(float(x[3])))
 
             child_ymax = SubElement(child_bndbox, 'ymax')
-            child_ymax.text = str(int(float(x[4]))) #ymax
+            child_ymax.text = str(int(float(x[4])))
 
         tree = ET.ElementTree(top)
         save = fname+'.xml'
